@@ -6,4 +6,9 @@ What is ChatSpace?
 It is nothing but rooms for personal chats. Unlimited user can join a given ChatSpace.
 
 ``Demo of Terminal Chat Network``
+
+
+
+
+
 [![](http://img.youtube.com/vi/ztW53UKqePY/0.jpg)](http://www.youtube.com/watch?v=ztW53UKqePY "")
