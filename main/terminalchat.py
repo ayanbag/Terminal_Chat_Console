@@ -169,7 +169,6 @@ class TerminalChat():
             time.sleep(1)
             chatrooms_server.new_room(chatroom,0)
             print("")
-            cprint(" {} is created.Enjoy your ChatSpace".format(chatroom),"red")
             time.sleep(1)
             os.system('cls')
             
@@ -220,7 +219,7 @@ class TerminalChat():
         if message=="send file" or message=="sdf":
             import ftpserver
             ftpserver.uploadfile()
-            message=formate+"File is uploaded. Download it. [FILE NAME : {}].".format(ftpserver.flnm)
+            message=formate+"File is uploaded. Download it."
         if message=='download file' or message=='ddf':
             import ftpserver
             ftpserver.dwnldfile()
