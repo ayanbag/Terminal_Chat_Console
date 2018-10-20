@@ -55,7 +55,7 @@ class TerminalChat():
         nwtemp=newsser.newsse()
         print(" NEWS :")
         for nw in nwtemp:
-            print("          {}".format(nw))
+            print("        {}".format(nw))
 
 
     def sleep(self):
@@ -236,9 +236,11 @@ class TerminalChat():
         message = input(colored(formate,"green"))
         if message=="send file" or message=="sdf":
             import ftpserver
+            os.chdir(os.getcwd()+'\\To_Be_Upload')
             os.system('dir')
             flt=ftpserver.uploadfile()
             message=formate+"file is uploaded.[filename = {}]".format(flt)
+            os.chdir(os.getcwd()+'\\..')
         if message=='download file' or message=='ddf':
             os.chdir(os.getcwd()+'\\Downloads')
             import ftpserver
