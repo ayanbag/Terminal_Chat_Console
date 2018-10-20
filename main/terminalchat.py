@@ -53,7 +53,7 @@ class TerminalChat():
 
         nwtemp=[]
         nwtemp=newsser.newsse()
-        print(" NEWS :")
+        cprint(" NEWS :","magenta")
         for nw in nwtemp:
             print("        {}".format(nw))
 
@@ -67,7 +67,6 @@ class TerminalChat():
         cprint(" Hi..There",'green',attrs=['bold'],file=sys.stderr)
         time.sleep(1)
         cprint(" Welcome to Secure Terminal Chat Network",'green',attrs=['bold'],file=sys.stderr)
-        print("")
         self.newsview()
         time.sleep(1)
         print("")
@@ -321,7 +320,7 @@ class TerminalChat():
             v1.1 : In-app file view is added
                    News feature is added to keep you updated with Updates news and new features''')
             time.sleep(1)
-            print("")
+            a=input()
             chk=input(" want to go back ? (y/n): ")
             if chk=='y':
                 os.system('cls')
