@@ -16,3 +16,4 @@ It is nothing but rooms for personal chats. Unlimited user can join a given Chat
 
 ``UPDATES``
 v1.1 : In App File viewing feature and realtime news display features is added
+v1.2 : Support for linux system is added
