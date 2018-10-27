@@ -7,7 +7,6 @@ import sys
 from PyInquirer import style_from_dict, Token, prompt
 import time
 import login_auth_reg
-from tqdm import tqdm
 from termcolor import colored,cprint
 from pusher import Pusher
 import pysher
@@ -16,14 +15,16 @@ import json
 import chatrooms_server
 import getpass
 import random
-from playsound import playsound
+
 from progress.bar import FillingCirclesBar
 from os import path
+import env_platform
 
 load_dotenv(dotenv_path='.env')
 
 class TerminalChat():
-        
+
+    version=1.2 
     pusher=None
     channel=None
     answ=None
@@ -33,19 +34,34 @@ class TerminalChat():
     temp_data=login_auth_reg.searchuser_password()
     for i in range(len(temp_data)):
         users[temp_data[i][0]]=temp_data[i][1]
-
+    
     chatrooms=[]
     chatrooms=chatrooms_server.all_rooms()
-    
-    if path.isdir('Downloads')==True:
+    temp_dir=os.getcwd()
+    os.chdir("C:")
+    if path.isdir("TCN_Downloads")==True:
         pass
     else:
-        os.system('mkdir Downloads')
+        os.system('mkdir TCN_Downloads')
 
-    if path.isdir('To_Be_Upload')==True:
+    if path.isdir('TCN_To_Be_Upload')==True:
         pass
     else:
-        os.system('mkdir To_Be_Upload')
+        os.system('mkdir TCN_To_Be_Upload')
+
+    os.chdir(temp_dir)
+    plat=env_platform.get_platform()
+    if plat=='Linux' or plat=='OS X':
+        value_plat=True
+    elif plat=='Windows':
+        value_plat=False
+
+    def clear(self):
+        if self.value_plat==True:
+            os.system('clear')
+        else:
+            os.system('cls')
+        
 
 
     def newsview(self):
@@ -59,7 +75,7 @@ class TerminalChat():
 
 
     def sleep(self):
-        t = 0.06
+        t = 0.02
         t += t * random.uniform(-0.1, 0.1)
         time.sleep(t)
         
@@ -68,7 +84,6 @@ class TerminalChat():
         time.sleep(1)
         cprint(" Welcome to Secure Terminal Chat Network",'green',attrs=['bold'],file=sys.stderr)
         self.newsview()
-        time.sleep(1)
         print("")
         print("")
         
@@ -94,7 +109,8 @@ class TerminalChat():
         ]
 
         answers=prompt(questions,style=style)
-        os.system('cls')
+
+        self.clear()
         time.sleep(0.05)
         print("")
         #########################################################
@@ -107,7 +123,7 @@ class TerminalChat():
         os.system("cls")
         colour.prGreen("connected")
         time.sleep(0.5)
-        os.system('cls')
+        self.clear()
 
         colour.prGreen("=================")
         colour.prGreen("||    LOGIN    ||")
@@ -151,13 +167,13 @@ class TerminalChat():
                     cprint(" incorrect password","red")
                     print(" ")
                     time.sleep(0.56)
-                    os.system('cls')
+                    self.clear()
                     self.logincred()
             else:
                 cprint(" incorrect username","red")
                 print("")
                 time.sleep(0.56)
-                os.system('cls')
+                self.clear()
                 self.logincred()
 
 
@@ -187,7 +203,7 @@ class TerminalChat():
             time.sleep(1)
             chatrooms_server.new_room(chatroom,0)
             print("")
-            os.system('cls')
+            self.clear()
             
 
 
@@ -197,31 +213,32 @@ class TerminalChat():
         if chatroom in self.chatrooms:
             self.chatroom=chatroom
             self.initPusher()
-            os.system('cls')
+            self.clear()
             cprint(" ChatSpace Security Code: {}".format(self.chatroom),"red")
             print("")
         else:
             cprint(" No Secure Chat Room is found !!")
             print("")
             time.sleep(0.2)
-            os.system('cls')
+            self.clear()
             self.chatselector()
+
     
 
 
     ''' Server Side '''
-
     def initPusher(self):
         self.pusher = Pusher(app_id=os.getenv('PUSHER_APP_ID', None), key=os.getenv('PUSHER_APP_KEY', None), secret=os.getenv('PUSHER_APP_SECRET', None), cluster=os.getenv('PUSHER_APP_CLUSTER', None))
         self.clientPusher = pysher.Pusher(os.getenv('PUSHER_APP_KEY', None), os.getenv('PUSHER_APP_CLUSTER', None))
         self.clientPusher.connection.bind('pusher:connection_established', self.connectHandler)
         self.clientPusher.connect()
     
-    def connectHandler(self,data):
-        self.channel=self.clientPusher.subscribe(self.chatroom)
-        self.channel.bind('newmessage',self.pusherCallback)
+    def connectHandler(self, data):
+        self.channel = self.clientPusher.subscribe(self.chatroom)
+        self.channel.bind('newmessage', self.pusherCallback)
 
     def pusherCallback(self, message):
+        from playsound import playsound
         formate="["+self.user+"]: "
         message = json.loads(message)
         if message['user'] != self.user:
@@ -235,25 +252,28 @@ class TerminalChat():
         message = input(colored(formate,"green"))
         if message=="send file" or message=="sdf":
             import ftpserver
-            os.chdir(os.getcwd()+'\\To_Be_Upload')
+            os.chdir('C:\\TCN_To_Be_Upload')
+            time.sleep(0.5)
+            print("")
             os.system('dir')
+            print("")
             flt=ftpserver.uploadfile()
             message=formate+"file is uploaded.[filename = {}]".format(flt)
-            os.chdir(os.getcwd()+'\\..')
+            os.chdir(self.temp_dir)
         if message=='download file' or message=='ddf':
-            os.chdir(os.getcwd()+'\\Downloads')
+            os.chdir('C:\\TCN_Downloads')
             import ftpserver
             ftpserver.dwnldfile()
-            os.chdir(os.getcwd()+'\\..')
+            os.chdir(self.temp_dir)
             message="........."
         if message=='exit':
-            os.system('cls')
+            self.clear()
             self.main()
         if message=='open file':
-            os.chdir(os.getcwd()+'\\Downloads')
+            os.chdir('C:\\TCN_Downloads')
             fl=input(" [system]: filename -> ")
             os.system(fl)
-            os.chdir(os.getcwd()+'\\..')
+            os.chdir(self.temp_dir)
             message="......."
         self.pusher.trigger(self.chatroom, u'newmessage', {"user": self.user, "message": message})
 
@@ -261,11 +281,12 @@ class TerminalChat():
         print("")
         cprint(" Terminal Chat Network v1.1","yellow")
         print("")
-        cprint(" Version: 1.1","yellow")
+        cprint(" Version: {}".format(self.version),"yellow")
         print("")
         time.sleep(0.1)
         cprint(" Devoloped by Ayan Bag","yellow")
-        time.sleep(5)
+        time.sleep(1)
+        k=input()
         self.main()
         
 
@@ -280,7 +301,7 @@ class TerminalChat():
         Token.Question: '#7FFF00 bold',
         })
 
-        os.system('cls')
+        self.clear()
         self.welcome()
 
         qus=[
@@ -288,7 +309,7 @@ class TerminalChat():
                 'type':'list',
                 'name':'choice',
                 'message':'Enter :',
-                'choices':['terminal chat','update release','help','about','exit'],
+                'choices':['terminal chat','update','help','about','exit'],
                 'default':'terminal chat'
 
             }
@@ -300,59 +321,110 @@ class TerminalChat():
                 
             self.logincred()
             time.sleep(1)
-            os.system('cls')
+            self.clear()
             self.chatselector()
+            
             while True:
                 self.getInput()
-        
+
         elif answer['choice']=='about':
             self.about()
 
         elif answer['choice']=='exit':
+            print("")
             print(" closing")
             time.sleep(0.5)
-            os.system('cls')
+            self.clear()
             sys.exit(1)
         
-        elif answer['choice']=='update release':
-            print("")
-            print('''UPDATE RELEASE:
-            v1.1 : In-app file view is added
-                   News feature is added to keep you updated with Updates news and new features''')
-            time.sleep(1)
-            a=input()
-            chk=input(" want to go back ? (y/n): ")
-            if chk=='y':
-                os.system('cls')
-                self.main()
-            else:
-                time.sleep(0.5)
-                os.system('cls')
-                sys.exit(1)
+        elif answer['choice']=='update':
 
-        
+
+            style = style_from_dict({
+            Token.QuestionMark: '#E91E63 bold',
+            Token.Selected: '#00FFFF',
+            Token.Instruction: '', 
+            Token.Answer: '#2196f3 bold',
+            Token.Question: '#7FFF00 bold',
+            })
+
+
+            qus1=[
+            {
+                'type':'list',
+                'name':'upd',
+                'message':'Enter :',
+                'choices':['update now','update release','exit'],
+                'default':'terminal chat'
+
+            }
+            ]
+
+            ans1=prompt(qus1,style=style)
+
+            print("")
+            if ans1['upd']=='update release':
+                print('''UPDATE RELEASE:
+                v1.1 : In-app file view is added
+                    News feature is added to keep you updated with Updates news and new features
+                v1.2 : Linux/UNIX enviroment support is added.''')
+                time.sleep(1)
+                a=input()
+                chk=input(" want to go back ? (y/n): ")
+                if chk=='y':
+                    self.clear()
+                    self.main()
+                else:
+                    time.sleep(0.5)
+                    self.clear()
+                    sys.exit(1)
+            
+            elif ans1['upd']=='update now':
+                print(" ")
+                os.system('pip install tcn_app')
+                print("")
+                cprint(" successfully updated")
+                print("")
+                self.clear()
+                a=input(" want to go back(y/n) ->")
+                if a=='y':
+                    self.main()
+                else:
+                    sys.exit()
+            elif ans1['udp']=='exit':
+                print("")
+                print(" closing")
+                time.sleep(1)
+                self.clear()
+                sys.exit(1)
+                
         elif answer['choice']=='help':
             print("")
             time.sleep(1)
             cprint(" ----------HELP----------","red")
             print("")
-            print(colored(" note:","green")+" commands are only applicable inside ChatSpace")
+            print(colored(" note:","green")+" <> commands are only applicable inside ChatSpace.")
+            print("       <> to upload the files put your desired file in To_Be_Upload folder in your C: Drive.")
             print("")
             print(" commands: sdf or send file -> to distribute a file in personal ChatSpace")
             print("           ddf or download file -> to collect the file which is distributed in ChatSpace")
             print("           open file -> to open the recently downloaded file")
             print("           exit -> to exit from current ChatSpace")
+            print("")
             time.sleep(1)
             print("")
+            k=input()
             chk=input(" want to go back ? (y/n): ")
             if chk=='y':
-                os.system('cls')
+                self.clear()
                 self.main()
             else:
                 time.sleep(0.5)
-                os.system('cls')
+                self.clear()
                 sys.exit(1)
 
+def mainload():
+    TerminalChat().main()
 
 if __name__=="__main__":
     TerminalChat().main()
