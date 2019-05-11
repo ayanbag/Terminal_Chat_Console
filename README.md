@@ -1,3 +1,6 @@
+[![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](http://ayanbag.github.io)
+[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](http://ayanbag.github.io)
+
 ``TERMINAL CHAT``
 ===================
 It is prototype of console chating apps like the one we saw in Die Hard 4. I call this app TERMINAL CHAT NETWORK. It can send any time of file in the given ChatSpace and those how are in the given ChatSpace can download it.
